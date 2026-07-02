@@ -1,66 +1,51 @@
 """
-productos.py
-------------
-Responsable: Estudiante 3 (rol: Responsable de stock)
-
-Registro básico del catálogo de productos.
-El control de cantidades disponibles se hace en stock.py.
-Persistencia en datos/productos.json
+almacenamiento.py
+------------------
+Funciones genéricas para leer y escribir archivos JSON.
+Todos los módulos del proyecto (clientes, productos, pedidos, etc.)
+usan estas funciones para no repetir lógica de lectura/escritura.
 """
 
-from modulos.almacenamiento import leer_json, escribir_json, generar_id
+import json
+import os
 
-ARCHIVO = "productos.json"
+CARPETA_DATOS = os.path.join(os.path.dirname(os.path.dirname(__file__)), "datos")
 
 
-def registrar_producto(nombre, precio, stock_inicial=0):
+def leer_json(nombre_archivo):
     """
-    Registra un nuevo producto en el catálogo.
-
-    Parametros:
-        nombre (str): nombre del producto.
-        precio (float): precio unitario.
-        stock_inicial (int): cantidad inicial disponible.
-
-    Retorna:
-        dict: el producto creado, o None si los datos no son válidos.
+    Lee un archivo JSON dentro de la carpeta datos/ y devuelve una lista.
+    Si el archivo no existe, lo crea vacío y devuelve [].
     """
-    if not nombre or not nombre.strip():
-        print("Error: el nombre del producto no puede estar vacío.")
-        return None
-    if precio < 0:
-        print("Error: el precio no puede ser negativo.")
-        return None
-    if stock_inicial < 0:
-        print("Error: el stock inicial no puede ser negativo.")
-        return None
+    ruta = os.path.join(CARPETA_DATOS, nombre_archivo)
+    if not os.path.exists(ruta):
+        os.makedirs(CARPETA_DATOS, exist_ok=True)
+        with open(ruta, "w", encoding="utf-8") as f:
+            json.dump([], f)
+        return []
 
-    productos = leer_json(ARCHIVO)
-    nuevo_producto = {
-        "id": generar_id(productos, "id"),
-        "nombre": nombre.strip(),
-        "precio": precio,
-        "stock": stock_inicial,
-    }
-    productos.append(nuevo_producto)
-    escribir_json(ARCHIVO, productos)
-    print(f"Producto registrado con id {nuevo_producto['id']}.")
-    return nuevo_producto
+    with open(ruta, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError:
+            return []
 
 
-def buscar_producto(producto_id):
+def escribir_json(nombre_archivo, datos):
     """
-    Busca un producto por id. Retorna dict o None.
+    Sobreescribe un archivo JSON dentro de la carpeta datos/ con la lista dada.
     """
-    productos = leer_json(ARCHIVO)
-    for producto in productos:
-        if producto["id"] == producto_id:
-            return producto
-    return None
+    ruta = os.path.join(CARPETA_DATOS, nombre_archivo)
+    os.makedirs(CARPETA_DATOS, exist_ok=True)
+    with open(ruta, "w", encoding="utf-8") as f:
+        json.dump(datos, f, indent=4, ensure_ascii=False)
 
 
-def listar_productos():
+def generar_id(lista, campo_id):
     """
-    Retorna la lista completa de productos.
+    Genera el siguiente id numérico consecutivo para una lista de diccionarios,
+    según el campo indicado (por ejemplo 'id' o 'codigo').
     """
-    return leer_json(ARCHIVO)
+    if not lista:
+        return 1
+    return max(item[campo_id] for item in lista) + 1

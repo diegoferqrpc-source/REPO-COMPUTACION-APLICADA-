@@ -1,91 +1,66 @@
 """
-stock.py
---------
+productos.py
+------------
 Responsable: Estudiante 3 (rol: Responsable de stock)
 
-Funciones:
-    verificar_stock(producto_id, cantidad)
-    agregar_stock(producto_id, cantidad)
-    descontar_stock(producto_id, cantidad)
-    mostrar_stock_bajo(minimo)
-
-Persistencia en datos/productos.json (campo "stock" de cada producto).
+Registro básico del catálogo de productos.
+El control de cantidades disponibles se hace en stock.py.
+Persistencia en datos/productos.json
 """
 
-from modulos.almacenamiento import leer_json, escribir_json
-from modulos.productos import ARCHIVO, buscar_producto
+from modulos.almacenamiento import leer_json, escribir_json, generar_id
+
+ARCHIVO = "productos.json"
 
 
-def verificar_stock(producto_id, cantidad):
+def registrar_producto(nombre, precio, stock_inicial=0):
     """
-    Verifica si hay stock suficiente de un producto.
+    Registra un nuevo producto en el catálogo.
 
     Parametros:
-        producto_id (int): id del producto.
-        cantidad (int): cantidad solicitada.
+        nombre (str): nombre del producto.
+        precio (float): precio unitario.
+        stock_inicial (int): cantidad inicial disponible.
 
     Retorna:
-        True si hay stock suficiente, False si no o si el producto no existe.
+        dict: el producto creado, o None si los datos no son válidos.
     """
-    producto = buscar_producto(producto_id)
-    if producto is None:
-        print(f"Error: el producto {producto_id} no existe.")
-        return False
-    if cantidad <= 0:
-        print("Error: la cantidad debe ser mayor a 0.")
-        return False
-    return producto["stock"] >= cantidad
+    if not nombre or not nombre.strip():
+        print("Error: el nombre del producto no puede estar vacío.")
+        return None
+    if precio < 0:
+        print("Error: el precio no puede ser negativo.")
+        return None
+    if stock_inicial < 0:
+        print("Error: el stock inicial no puede ser negativo.")
+        return None
+
+    productos = leer_json(ARCHIVO)
+    nuevo_producto = {
+        "id": generar_id(productos, "id"),
+        "nombre": nombre.strip(),
+        "precio": precio,
+        "stock": stock_inicial,
+    }
+    productos.append(nuevo_producto)
+    escribir_json(ARCHIVO, productos)
+    print(f"Producto registrado con id {nuevo_producto['id']}.")
+    return nuevo_producto
 
 
-def agregar_stock(producto_id, cantidad):
+def buscar_producto(producto_id):
     """
-    Aumenta el stock disponible de un producto.
-
-    Retorna:
-        True si se agregó correctamente, False si hubo un error.
+    Busca un producto por id. Retorna dict o None.
     """
-    if cantidad <= 0:
-        print("Error: la cantidad a agregar debe ser mayor a 0.")
-        return False
-
     productos = leer_json(ARCHIVO)
     for producto in productos:
         if producto["id"] == producto_id:
-            producto["stock"] += cantidad
-            escribir_json(ARCHIVO, productos)
-            print(f"Stock actualizado. Nuevo stock de '{producto['nombre']}': {producto['stock']}.")
-            return True
-
-    print(f"Error: el producto {producto_id} no existe.")
-    return False
+            return producto
+    return None
 
 
-def descontar_stock(producto_id, cantidad):
+def listar_productos():
     """
-    Descuenta stock de un producto, validando disponibilidad previa.
-
-    Retorna:
-        True si se descontó correctamente, False si no hay stock suficiente
-        o si el producto no existe.
+    Retorna la lista completa de productos.
     """
-    if not verificar_stock(producto_id, cantidad):
-        print("Error: no hay stock suficiente para descontar.")
-        return False
-
-    productos = leer_json(ARCHIVO)
-    for producto in productos:
-        if producto["id"] == producto_id:
-            producto["stock"] -= cantidad
-            escribir_json(ARCHIVO, productos)
-            print(f"Stock descontado. Nuevo stock de '{producto['nombre']}': {producto['stock']}.")
-            return True
-    return False
-
-
-def mostrar_stock_bajo(minimo):
-    """
-    Retorna la lista de productos cuyo stock es menor o igual al mínimo indicado.
-    Útil para alertar antes de que un pedido no pueda despacharse.
-    """
-    productos = leer_json(ARCHIVO)
-    return [p for p in productos if p["stock"] <= minimo]
+    return leer_json(ARCHIVO)

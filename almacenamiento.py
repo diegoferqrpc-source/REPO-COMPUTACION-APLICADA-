@@ -1,51 +1,74 @@
 """
-almacenamiento.py
-------------------
-Funciones genéricas para leer y escribir archivos JSON.
-Todos los módulos del proyecto (clientes, productos, pedidos, etc.)
-usan estas funciones para no repetir lógica de lectura/escritura.
+clientes.py
+-----------
+Responsable: Estudiante 1 (rol: Responsable de pedidos / clientes)
+
+Funciones para registrar y consultar clientes.
+Persistencia en datos/clientes.json
 """
 
-import json
-import os
+from modulos.almacenamiento import leer_json, escribir_json, generar_id
 
-CARPETA_DATOS = os.path.join(os.path.dirname(os.path.dirname(__file__)), "datos")
+ARCHIVO = "clientes.json"
 
 
-def leer_json(nombre_archivo):
+def registrar_cliente(nombre, telefono, direccion):
     """
-    Lee un archivo JSON dentro de la carpeta datos/ y devuelve una lista.
-    Si el archivo no existe, lo crea vacío y devuelve [].
-    """
-    ruta = os.path.join(CARPETA_DATOS, nombre_archivo)
-    if not os.path.exists(ruta):
-        os.makedirs(CARPETA_DATOS, exist_ok=True)
-        with open(ruta, "w", encoding="utf-8") as f:
-            json.dump([], f)
-        return []
+    Registra un nuevo cliente.
 
-    with open(ruta, "r", encoding="utf-8") as f:
-        try:
-            return json.load(f)
-        except json.JSONDecodeError:
-            return []
+    Parametros:
+        nombre (str): nombre completo del cliente.
+        telefono (str): teléfono de contacto.
+        direccion (str): dirección de entrega.
+
+    Retorna:
+        dict: el cliente creado, con su id asignado.
+        None: si los datos no son válidos.
+    """
+    if not nombre or not nombre.strip():
+        print("Error: el nombre del cliente no puede estar vacío.")
+        return None
+    if not telefono or not telefono.strip():
+        print("Error: el teléfono del cliente no puede estar vacío.")
+        return None
+
+    clientes = leer_json(ARCHIVO)
+    nuevo_cliente = {
+        "id": generar_id(clientes, "id"),
+        "nombre": nombre.strip(),
+        "telefono": telefono.strip(),
+        "direccion": direccion.strip() if direccion else "",
+    }
+    clientes.append(nuevo_cliente)
+    escribir_json(ARCHIVO, clientes)
+    print(f"Cliente registrado con id {nuevo_cliente['id']}.")
+    return nuevo_cliente
 
 
-def escribir_json(nombre_archivo, datos):
+def buscar_cliente(cliente_id):
     """
-    Sobreescribe un archivo JSON dentro de la carpeta datos/ con la lista dada.
+    Busca un cliente por su id.
+
+    Retorna:
+        dict con los datos del cliente, o None si no existe.
     """
-    ruta = os.path.join(CARPETA_DATOS, nombre_archivo)
-    os.makedirs(CARPETA_DATOS, exist_ok=True)
-    with open(ruta, "w", encoding="utf-8") as f:
-        json.dump(datos, f, indent=4, ensure_ascii=False)
+    clientes = leer_json(ARCHIVO)
+    for cliente in clientes:
+        if cliente["id"] == cliente_id:
+            return cliente
+    return None
 
 
-def generar_id(lista, campo_id):
+def listar_clientes():
     """
-    Genera el siguiente id numérico consecutivo para una lista de diccionarios,
-    según el campo indicado (por ejemplo 'id' o 'codigo').
+    Retorna la lista completa de clientes registrados.
     """
-    if not lista:
-        return 1
-    return max(item[campo_id] for item in lista) + 1
+    return leer_json(ARCHIVO)
+
+
+def existe_cliente(cliente_id):
+    """
+    Retorna True si el cliente existe, False si no.
+    Se usa como validación desde el módulo de pedidos.
+    """
+    return buscar_cliente(cliente_id) is not None

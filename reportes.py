@@ -1,86 +1,91 @@
 """
-reportes.py
+despacho.py
 -----------
-Responsable: Estudiante 5 (rol: Responsable de reportes)
+Responsable: Estudiante 4 (rol: Responsable de despacho)
 
 Funciones:
-    contar_no_entregados()
-    pedidos_por_estado()
-    porcentaje_retrasos()
-    total_pedidos()
-    listar_pedidos_criticos()
+    asignar_despacho(codigo_pedido, repartidor)
+    actualizar_estado(codigo_pedido, nuevo_estado)
+    registrar_motivo_no_entrega(codigo_pedido, motivo)
+    registrar_entrega(codigo_pedido)
+
+Reutiliza pedidos.py para no duplicar la lógica de lectura/escritura de pedidos.
 """
 
-from modulos.pedidos import listar_pedidos, ESTADOS_VALIDOS
+from modulos.pedidos import ARCHIVO, ESTADOS_VALIDOS, buscar_pedido, cambiar_estado_pedido
+from modulos.almacenamiento import leer_json, escribir_json
 
 
-def total_pedidos():
+def asignar_despacho(codigo_pedido, repartidor):
     """
-    Retorna la cantidad total de pedidos registrados.
-    """
-    return len(listar_pedidos())
-
-
-def pedidos_por_estado():
-    """
-    Calcula cuántos pedidos hay en cada estado.
+    Asigna un repartidor a un pedido y cambia su estado a 'en_ruta'.
 
     Retorna:
-        dict, por ejemplo:
-        {"pendiente": 3, "en_ruta": 1, "entregado": 5,
-         "retrasado": 0, "no_entregado": 2}
+        True si se asignó correctamente, False si el pedido no existe
+        o el nombre del repartidor está vacío.
     """
-    conteo = {estado: 0 for estado in ESTADOS_VALIDOS}
-    for pedido in listar_pedidos():
-        estado = pedido.get("estado")
-        if estado in conteo:
-            conteo[estado] += 1
-    return conteo
+    if not repartidor or not repartidor.strip():
+        print("Error: debe indicar el nombre del repartidor.")
+        return False
+
+    pedido = buscar_pedido(codigo_pedido)
+    if pedido is None:
+        print(f"Error: el pedido {codigo_pedido} no existe.")
+        return False
+
+    pedidos = leer_json(ARCHIVO)
+    for p in pedidos:
+        if p["codigo"] == codigo_pedido:
+            p["repartidor"] = repartidor.strip()
+            p["estado"] = "en_ruta"
+            escribir_json(ARCHIVO, pedidos)
+            print(f"Pedido {codigo_pedido} asignado a '{repartidor}' y marcado 'en_ruta'.")
+            return True
+    return False
 
 
-def contar_no_entregados():
+def actualizar_estado(codigo_pedido, nuevo_estado):
     """
-    Retorna la cantidad de pedidos en estado 'no_entregado'.
+    Actualiza el estado de un pedido (pendiente, en_ruta, entregado,
+    retrasado, no_entregado). Delegado en pedidos.cambiar_estado_pedido
+    para mantener una sola fuente de verdad sobre los estados válidos.
     """
-    return pedidos_por_estado()["no_entregado"]
+    return cambiar_estado_pedido(codigo_pedido, nuevo_estado)
 
 
-def porcentaje_retrasos():
+def registrar_motivo_no_entrega(codigo_pedido, motivo):
     """
-    Calcula el porcentaje de pedidos en estado 'retrasado' respecto
-    al total de pedidos.
-
-    Fórmula:
-        (pedidos_retrasados / total_pedidos) * 100
+    Registra el motivo por el cual un pedido no fue entregado
+    y cambia su estado a 'no_entregado'.
 
     Retorna:
-        float redondeado a 2 decimales. 0.0 si no hay pedidos.
+        True si se registró correctamente, False en caso de error.
     """
-    total = total_pedidos()
-    if total == 0:
-        return 0.0
-    retrasados = pedidos_por_estado()["retrasado"]
-    return round((retrasados / total) * 100, 2)
+    if not motivo or not motivo.strip():
+        print("Error: debe indicar un motivo de no entrega.")
+        return False
+
+    pedido = buscar_pedido(codigo_pedido)
+    if pedido is None:
+        print(f"Error: el pedido {codigo_pedido} no existe.")
+        return False
+
+    pedidos = leer_json(ARCHIVO)
+    for p in pedidos:
+        if p["codigo"] == codigo_pedido:
+            p["motivo_no_entrega"] = motivo.strip()
+            p["estado"] = "no_entregado"
+            escribir_json(ARCHIVO, pedidos)
+            print(f"Pedido {codigo_pedido} marcado como 'no_entregado'. Motivo: {motivo}.")
+            return True
+    return False
 
 
-def listar_pedidos_criticos():
+def registrar_entrega(codigo_pedido):
     """
-    Retorna la lista de pedidos que están en estado 'retrasado' o
-    'no_entregado', es decir, los que requieren atención inmediata.
-    """
-    return [p for p in listar_pedidos() if p["estado"] in ("retrasado", "no_entregado")]
+    Marca un pedido como entregado exitosamente.
 
-
-def imprimir_resumen():
+    Retorna:
+        True si se registró la entrega, False si el pedido no existe.
     """
-    Imprime en consola un resumen general de indicadores.
-    Función de conveniencia usada desde el menú principal.
-    """
-    print("\n--- RESUMEN DE INDICADORES ---")
-    print(f"Total de pedidos: {total_pedidos()}")
-    for estado, cantidad in pedidos_por_estado().items():
-        print(f"  - {estado}: {cantidad}")
-    print(f"Porcentaje de pedidos retrasados: {porcentaje_retrasos()}%")
-    print(f"Pedidos no entregados: {contar_no_entregados()}")
-    criticos = listar_pedidos_criticos()
-    print(f"Pedidos críticos (retrasados o no entregados): {len(criticos)}")
+    return cambiar_estado_pedido(codigo_pedido, "entregado")
