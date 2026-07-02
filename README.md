@@ -51,6 +51,20 @@ Condiciones:
    de funciones por módulo.
 6. Después del plan, quiero implementar módulo por módulo.
 ```
+proyecto_pedidos/
+├── main.py                      → menú principal y submenús
+├── datos/
+│   ├── clientes.json
+│   ├── productos.json
+│   └── pedidos.json
+└── modulos/
+    ├── almacenamiento.py        → funciones genéricas de lectura/escritura JSON
+    ├── clientes.py              → gestión de clientes
+    ├── productos.py             → catálogo de productos
+    ├── stock.py                 → disponibilidad de inventario
+    ├── pedidos.py                → creación y validación de pedidos
+    ├── despacho.py               → asignación de repartidor y estados
+    └── reportes.py                → indicadores finales
 2) Responsable de clientes
 ```
 Ayúdame a construir el módulo clientes.py para un sistema de control de pedidos
