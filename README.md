@@ -5,7 +5,7 @@ Sistema en **Python** para registrar clientes, controlar stock, generar pedidos,
 
 
 
-## 🧭 Diagrama de flujo
+##  Diagrama de flujo
 
 ![Diagrama de flujo del sistema](docs/diagrama_flujo.svg)
 
@@ -32,7 +32,7 @@ flowchart TD
 
 ---
 
-## 🤖 Prompts usados para pedirle código a la IA
+##  Prompts usados para pedirle código a la IA
 
 Siguiendo el manual del curso, no le pedimos a la IA "todo el proyecto de una vez". Primero pedimos un **plan general**, y luego un **prompt por módulo**, pidiendo funciones pequeñas y explicadas. Estos son los prompts reales que usamos:
 
