@@ -50,6 +50,8 @@ Condiciones:
    de funciones por módulo.
 6. Después del plan, quiero implementar módulo por módulo.
 ```
+<img width="545" height="556" alt="image" src="https://github.com/user-attachments/assets/0360c721-90cf-41e8-a07f-a0236405ed45" />
+
 
 ### 2) Responsable de clientes
 ```
