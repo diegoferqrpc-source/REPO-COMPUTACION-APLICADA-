@@ -130,43 +130,24 @@ Después de cada respuesta de la IA, **revisamos el código a mano**: probamos c
 cd proyecto_pedidos
 python main.py
 ```
+MIGRACION A HTML 
+Prompt #8 — Conversión a versión web 
+Ya tengo el sistema completo en Python: módulos clientes.py, productos.py,
+stock.py, pedidos.py, despacho.py y reportes.py, cada uno con funciones
+pequeñas, validadas, con parámetros y retorno.
 
-### Ver la app funcionando en el navegador
-Una vez publicado con GitHub Pages (ver abajo), la página vive en:
-```
-https://TU-USUARIO.github.io/TU-REPOSITORIO/
-```
-También puedes abrir `index.html` directamente con doble clic, sin instalar nada.
-
----
-
-## 🗂️ Estructura del repositorio
-
-```
-├── index.html                 ← app funcional (GitHub Pages la sirve desde aquí)
-├── docs/
-│   └── diagrama_flujo.svg
-└── proyecto_pedidos/
-    ├── main.py
-    ├── AGENTS.md
-    ├── datos/
-    │   ├── clientes.json
-    │   ├── productos.json
-    │   └── pedidos.json
-    └── modulos/
-        ├── almacenamiento.py
-        ├── clientes.py
-        ├── productos.py
-        ├── stock.py
-        ├── pedidos.py
-        ├── despacho.py
-        └── reportes.py
-```
+Necesito una versión funcional en el navegador (un solo archivo index.html,
+con HTML, CSS y JS) que replique exactamente la misma lógica de negocio:
+- Las mismas funciones y validaciones de cada módulo, traducidas a JavaScript.
+- Los datos (clientes, productos, pedidos) deben vivir en memoria dentro del
+  navegador, ya que no hay acceso a archivos como en Python.
+- Debe reemplazar el menú de consola por una interfaz visual (sidebar +
+  formularios) que llame a esas mismas funciones.
+- No debe depender de instalar nada ni de un servidor: debe poder abrirse con
+  doble clic o publicarse con GitHub Pages.
+No dupliques lógica ni cambies las reglas de validación que ya definimos en
+Python; el comportamiento debe ser idéntico, solo cambia el lenguaje y la
+interfaz.
 
 
 
-- [ ] Reemplazar los nombres del equipo en la tabla de roles.
-- [ ] Cada integrante debe poder explicar su módulo con este README como guion.
-- [ ] Mostrar el diagrama de flujo (`docs/diagrama_flujo.svg`) al explicar el orden de validaciones.
-- [ ] Mostrar los prompts usados y qué corrigieron manualmente después de cada respuesta de la IA.
-- [ ] Abrir el link de GitHub Pages en vivo y hacer una demo: registrar cliente → registrar producto → crear pedido → despachar → ver reportes.
