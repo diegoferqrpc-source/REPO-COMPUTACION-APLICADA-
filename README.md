@@ -1,27 +1,9 @@
-# 📦 Sistema de Control de Pedidos No Entregados
+
 
 Proyecto final — **Computación Aplicada**
 Sistema en **Python** para registrar clientes, controlar stock, generar pedidos, gestionar despacho y calcular reportes de pedidos retrasados o no entregados, desarrollado en equipo con apoyo de **Codex / IA**.
 
-🔗 **Demo funcional en vivo:** `https://TU-USUARIO.github.io/TU-REPOSITORIO/`
-*(reemplaza con tu enlace real después de activar GitHub Pages — instrucciones al final de este documento)*
 
----
-
-## 👥 Integrantes y roles (módulos)
-
-| Integrante | Rol | Módulo / archivo | Qué hace su módulo |
-|---|---|---|---|
-| [Nombre 1] | **Integrador del proyecto** | `main.py` | Construye el menú principal, conecta todos los módulos y valida el flujo completo del sistema. |
-| [Nombre 2] | **Responsable de clientes** | `modulos/clientes.py` | Registra y consulta clientes. Valida que nombre y teléfono no estén vacíos. |
-| [Nombre 3] | **Responsable de pedidos** | `modulos/pedidos.py` | Valida cliente y stock antes de crear un pedido. Controla los 5 estados posibles. |
-| [Nombre 4] | **Responsable de stock** | `modulos/productos.py` `modulos/stock.py` | Administra el catálogo y la disponibilidad: agregar, descontar y verificar stock. |
-| [Nombre 5] | **Responsable de despacho** | `modulos/despacho.py` | Asigna repartidor y actualiza el estado del pedido (en camino, entregado, retrasado, no entregado). |
-| [Nombre 6] | **Responsable de reportes** | `modulos/reportes.py` | Calcula indicadores: total de pedidos, % de retrasos, pedidos críticos. |
-
-> ✏️ Reemplaza `[Nombre 1]`...`[Nombre 6]` con los nombres reales del equipo antes de subir el repo.
-
----
 
 ## 🧭 Diagrama de flujo
 
@@ -181,43 +163,7 @@ También puedes abrir `index.html` directamente con doble clic, sin instalar nad
         └── reportes.py
 ```
 
----
 
-## 🚀 Cómo subir este proyecto a GitHub y publicarlo
-
-### 1. Crear el repositorio
-1. Entra a [github.com](https://github.com) → botón **New repository**.
-2. Ponle un nombre, por ejemplo `sistema-pedidos-no-entregados`.
-3. Déjalo público, **no** marques "Add a README" (ya tenemos uno).
-4. Click en **Create repository**.
-
-### 2. Subir los archivos desde tu computadora
-Descomprime la carpeta que te compartí y, dentro de ella, abre una terminal:
-
-```bash
-git init
-git add .
-git commit -m "Primera entrega: sistema de pedidos + roles + prompts + diagrama"
-git branch -M main
-git remote add origin https://github.com/TU-USUARIO/TU-REPOSITORIO.git
-git push -u origin main
-```
-*(Reemplaza `TU-USUARIO` y `TU-REPOSITORIO` por los tuyos. Si es tu primera vez usando git desde consola, GitHub te pedirá iniciar sesión la primera vez que hagas `push`.)*
-
-> Si no quieres usar comandos, también puedes hacerlo arrastrando la carpeta descomprimida directo a la página del repositorio en GitHub, con el botón **"Add file → Upload files"**.
-
-### 3. Activar GitHub Pages (para que la app se vea en un link)
-1. En tu repositorio, ve a **Settings → Pages**.
-2. En "Branch", elige `main` y la carpeta `/ (root)`.
-3. Click en **Save**.
-4. Espera 1–2 minutos y GitHub te mostrará el link público, algo como:
-   `https://TU-USUARIO.github.io/TU-REPOSITORIO/`
-
-Ese link es el que muestras en vivo durante tu exposición: ahí corre `index.html` con la app funcionando de verdad, sin depender de tu laptop.
-
----
-
-## ✅ Checklist para la exposición
 
 - [ ] Reemplazar los nombres del equipo en la tabla de roles.
 - [ ] Cada integrante debe poder explicar su módulo con este README como guion.
